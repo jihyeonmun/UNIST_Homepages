@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>UNIST 커뮤니티 게시판</title>
+<link rel="stylesheet" href="css/custom.css">
 </head>
 <body>
 	<script>
