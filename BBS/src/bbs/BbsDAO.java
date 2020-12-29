@@ -12,9 +12,9 @@ public class BbsDAO {
 	
 	public BbsDAO() {
 		try {
-			String dbURL = "jdbc:mysql://localhost:3306/BBS";
-			String dbID = "root";
-			String dbPassword = "0829";
+			String dbURL = "jdbc:mysql://localhost/unist";
+			String dbID = "unist";
+			String dbPassword = "0928";
 			Class.forName("com.mysql.jdbc.Driver");
 			conn = DriverManager.getConnection(dbURL, dbID, dbPassword);
 		} catch (Exception e){
