@@ -1,6 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 pageEncoding="UTF-8"%>
 <%@ page import = "java.io.PrintWriter" %> 
+<%@ page import = "bbs.BbsDAO" %> 
+<%@ page import = "bbs.Bbs" %> 
+<%@ page import = "java.util.ArrayList" %> 
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,12 +12,22 @@ pageEncoding="UTF-8"%>
 <link rel="stylesheet" href="css/bootstrap.css">
 <link rel="stylesheet" href="css/custom.css">
 <title>UNIST 커뮤니티 게시판</title>
+<style type = "text/css">
+	a, a:hover{
+		color: #000000;
+		text-decoration: none;
+	}
+</style>
 </head>
 <body>
 	<%
 		String userID = null;
 		if(session.getAttribute("userID") != null){
 			userID = (String) session.getAttribute("userID");
+		}
+		int pageNumber = 1;
+		if (request.getParameter("pageNumber") != null){
+			pageNumber = Integer.parseInt(request.getParameter("pageNumber"));
 		}
 	%>
 	<nav class="navbar navbar-default">
@@ -159,53 +172,46 @@ pageEncoding="UTF-8"%>
 			%>
 		</div>
 	</nav>
-	<div class= "container">
-		<div class = "jumbotron">
-			<div class = "container">
-				<h1>유니스트 아고라(가칭)</h1>
-				<p>이 곳 유니스트 커뮤니티 게시판입니다. 여러분의 많은 참여로 하나된 유니스트 동문 사회를 기원합니다.</p>
-				<img src="images/vision.jpg" width="1000">
-			</div>
-		</div>
-	</div>
-	<div class = "container">
-		<div id = "myCarousel" class = "carousel" data-ride = "carousel">
-			<ol class="carousel-indicators">
-				<li data-target="#myCarousel" data-slide-to = "0" class = "active"><li>
-				<li data-target="#myCarousel" data-slide-to = "1"><li>
-				<li data-target="#myCarousel" data-slide-to = "2"><li>
-				<li data-target="#myCarousel" data-slide-to = "3"><li>
-				<li data-target="#myCarousel" data-slide-to = "4"><li>
-				<li data-target="#myCarousel" data-slide-to = "5"><li>
-			</ol>
-			<div class="carousel-inner">
-				<div class="item active">
-					<img src="images/unist1.jpg">
-				</div>
-				<div class="item">
-					<img src="images/unist2.jpg">
-				</div>
-				<div class="item">
-					<img src="images/unist3.jpg">
-				</div>
-				<div class="item">
-					<img src="images/unist4.jpg">
-				</div>
-				<div class="item">
-					<img src="images/unist5.jpg">
-				</div>
-				<div class="item">
-					<img src="images/unist6.jpg">
-				</div>
-			</div>
-			<a class = "left carousel-control" href="#myCarousel" data-slide="prev">
-				<span class="glyphicon glyphicon-chevron-left"></span>
-			</a>
-			<a class = "right carousel-control" href="#myCarousel" data-slide="next">
-				<span class="glyphicon glyphicon-chevron-right"></span>
-			</a>
-		</div>
-	</div>
+	<div class="container">
+		<table class="table table-striped" style ="text-align: cetnter; border: 1px solid #ddddd">
+			<thead>
+				<tr>
+					<th style = "background-color:#eeeeee; text-align:center;">번호</th>
+					<th style = "background-color:#eeeeee; text-align:center;">제목</th>
+					<th style = "background-color:#eeeeee; text-align:center;">작성자</th>
+					<th style = "background-color:#eeeeee; text-align:center;">작성일</th>
+				</tr>
+			</thead>
+			<tbody>
+				<%
+					BbsDAO bbsDAO = new BbsDAO();
+					ArrayList<Bbs> list = bbsDAO.getList(pageNumber);
+					for(int i = 0; i < list.size(); i++){
+				%>
+				<tr>
+					<td><%= list.get(i).getBbsID()  %></td>
+					<td><a href = "view.jsp?bbsID<%= list.get(i).getBbsID() %>"><%= list.get(i).getBbsTitle().replaceAll(" ","&nbsp;").replaceAll("<","&lt;").replaceAll(">","&lt;").replaceAll("\n","<br>")  %></a></td>
+					<td><%= list.get(i).getUserID()  %></td>
+					<td><%= list.get(i).getBbsDate().substring(0,11) + list.get(i).getBbsDate().substring(11,13) + "시" + list.get(i).getBbsDate().substring(14,16) + "분" %></td>
+				</tr>
+				<%
+					}
+				%>
+			</tbody>
+		</table>
+		<%
+			if(pageNumber != 1){
+		%>		
+			<a href="bbs.jsp?pageNumber=<%=pageNumber - 1%>" class="btn btn-success btn-arraw-left">이전</a>
+		<% 
+			} if(bbsDAO.nextPage(pageNumber + 1)){
+		%>
+			<a href="bbs.jsp?pageNumber=<%=pageNumber + 1%>" class="btn btn-success btn-arraw-left">다음</a>
+		<% 
+			}
+		%>
+		<a href="write.jsp" class = "btn btn-primary pull-right">글쓰기</a>
+	</div>	
 	<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 	<script src="js/bootstrap.js"></script>  
 </body>
